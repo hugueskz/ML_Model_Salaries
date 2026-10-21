@@ -104,7 +104,23 @@ with tab1:
         }])
         prediction = reg_model.predict(input_data)[0]
         
-        st.metric(label="💰 Estimated Annual Salary", value=f"${prediction:,.0f} USD")
+        # Calcul de la fourchette basée sur la MAE (~ $45,000)
+        mae = 45000
+        min_val = max(0, prediction - mae)
+        max_val = prediction + mae
+        
+        st.metric(
+            label="💰 Estimated Annual Salary", 
+            value=f"${prediction:,.0f} USD",
+            delta=f"Expected range: ${min_val:,.0f} – ${max_val:,.0f}",
+            delta_color="off"
+        )
+        
+        # Message explicatif sur la marge d'erreur
+        st.info(
+            f"ℹ️ **Model Accuracy Note:** On average, predictions have a Mean Absolute Error (MAE) of **±${mae:,.0f} USD**. "
+            f"Therefore, your realistic estimated salary range is between **${min_val:,.0f}** and **${max_val:,.0f} USD**."
+        )
         
         if prediction > 180000:
             st.balloons()
